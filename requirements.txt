@@ -8,3 +8,4 @@ safetensors
 pillow
 av
 huggingface_hub
+imageio

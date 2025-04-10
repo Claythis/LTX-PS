@@ -1086,7 +1086,7 @@ class LTXVideoPipeline(DiffusionPipeline):
             latents=latents,
             output_height=latent_height,
             output_width=latent_width,
-            out_channels=self.transformer.in_channels
+            out_channels = self.transformer.config.in_channels  
             // math.prod(self.patchifier.patch_size),
         )
         if output_type != "latent":

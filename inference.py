@@ -1,5 +1,6 @@
 import argparse
 import os
+os.environ["TOKENIZERS_PARALLELISM"] = "false" 
 import random
 from datetime import datetime
 from pathlib import Path
@@ -180,6 +181,11 @@ def main():
         help="Path to a safetensors file that contains all model parts.",
     )
     parser.add_argument(
+    "--image_path",
+    type=str,
+    help="Path to an image to condition video generation on. Simplifies image-to-video usage.",
+    )
+    parser.add_argument(
         "--output_path",
         type=str,
         default=None,
@@ -285,6 +291,7 @@ def main():
     parser.add_argument(
         "--prompt",
         type=str,
+        required=True,
         help="Text prompt to guide generation",
     )
     parser.add_argument(
@@ -355,6 +362,12 @@ def main():
     )
 
     args = parser.parse_args()
+    # If --image_path is given, set up conditioning args
+    if args.image_path:
+        args.conditioning_media_paths = [args.image_path]
+        args.conditioning_start_frames = [0]
+        if not args.conditioning_strengths:
+            args.conditioning_strengths = [1.0]
     logger.warning(f"Running generation with arguments: {args}")
     infer(**vars(args))
 
