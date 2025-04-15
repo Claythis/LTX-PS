@@ -3,6 +3,8 @@ import time
 from rembg import remove
 from PIL import Image
 import io
+import cv2
+import numpy as np
 
 # -------------------------------
 # 🚀 CONFIG
@@ -11,8 +13,9 @@ input_folder = 'images/inputs'
 output_folder = 'images/bg_removed'
 
 test_mode = True  # Set to False to process all images
-test_files = ['pixar_image.jpg']  # Only used if test_mode is True
+test_files = ['test5.jpg']  # Only used if test_mode is True
 show_preview = True  # Toggle image pop-up preview
+post_process = True # Toggle post-processing (dilation/erosion)
 
 # Get list of files to process
 if test_mode:
@@ -48,6 +51,41 @@ for filename in files_to_process:
             input_data = input_file.read()
 
         output_data = remove(input_data)
+
+        # Post-process: Dilation/Erosion to clean up edges (if enabled)
+        if post_process:
+            img = Image.open(io.BytesIO(output_data))
+            img = img.convert("RGBA")
+            data = np.array(img)
+
+            # Extract alpha channel
+            alpha = data[:, :, 3]
+
+            # Morphological closing (dilate then erode)
+            kernel = np.ones((7, 7), np.uint8)
+            closed = cv2.morphologyEx(alpha, cv2.MORPH_CLOSE, kernel)
+
+            # Optional blur to smooth jagged edges
+            smoothed = cv2.GaussianBlur(closed, (5, 5), 0)
+
+            # Update the alpha channel
+            data[:, :, 3] = smoothed
+
+
+
+
+            # # Perform dilation on alpha channel (transparency channel)
+            # kernel = np.ones((5, 5), np.uint8)
+            # dilated = cv2.dilate(data[:, :, 3], kernel, iterations=1)
+
+            # # Apply the modified alpha channel back
+            # data[:, :, 3] = dilated
+
+            # Update the image with post-processed data
+            img = Image.fromarray(data)
+            output_data = io.BytesIO()
+            img.save(output_data, format="PNG")
+            output_data = output_data.getvalue()
 
         with open(output_path, 'wb') as output_file:
             output_file.write(output_data)
