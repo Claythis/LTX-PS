@@ -10,8 +10,8 @@ mp_drawing = mp.solutions.drawing_utils
 pose = mp_pose.Pose(static_image_mode=True, model_complexity=2)
 
 # Input and output directories
-input_dir = 'source'
-output_dir = 'pose'
+input_dir = 'mediapipe_source'
+output_dir = 'mediapipe_pose'
 os.makedirs(output_dir, exist_ok=True)
 
 # Get all image files
@@ -20,7 +20,9 @@ print(f"Found {len(image_files)} images")
 
 for filename in image_files:
     image_path = os.path.join(input_dir, filename)
-    output_path = os.path.join(output_dir, filename.replace('.jpg', '_pose.png').replace('.jpeg', '_pose.png').replace('.png', '_pose.png'))
+    
+    output_filename = os.path.splitext(filename)[0] + '_pose.png'
+    output_path = os.path.join(output_dir, output_filename)
     
     # Read image
     image = cv2.imread(image_path)
@@ -41,9 +43,12 @@ for filename in image_files:
             landmark_drawing_spec=mp_drawing.DrawingSpec(color=(255, 255, 255), thickness=2, circle_radius=2),
             connection_drawing_spec=mp_drawing.DrawingSpec(color=(255, 255, 255), thickness=2)
         )
-    
-    # Save result
-    cv2.imwrite(output_path, black_bg)
-    print(f"Processed {filename} -> {output_path}")
+
+        # Save result
+        print(f"Saving to: {output_path}")
+        success = cv2.imwrite(output_path, black_bg)
+        print("Write success:", success)
+    else:
+        print(f"No pose detected in {filename}, skipping save.")
 
 print("Pose extraction complete!")
