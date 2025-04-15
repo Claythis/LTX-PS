@@ -4,3 +4,5 @@ models/
 models/
 *.safetensors
 *.mp4
+train/
+outputs/
