@@ -9,11 +9,11 @@ import numpy as np
 # -------------------------------
 # 🚀 CONFIG
 # -------------------------------
-input_folder = 'images/inputs'
-output_folder = 'images/bg_removed'
+input_folder = 'images/preprocessed_inputs'
+output_folder = 'images/bg_removed_preprocess'
 
-test_mode = True  # Set to False to process all images
-test_files = ['test5.jpg']  # Only used if test_mode is True
+test_mode = False  # Set to False to process all images
+test_files = ['2dtest.jpg']  # Only used if test_mode is True
 show_preview = True  # Toggle image pop-up preview
 post_process = True # Toggle post-processing (dilation/erosion)
 
@@ -70,9 +70,6 @@ for filename in files_to_process:
 
             # Update the alpha channel
             data[:, :, 3] = smoothed
-
-
-
 
             # # Perform dilation on alpha channel (transparency channel)
             # kernel = np.ones((5, 5), np.uint8)
