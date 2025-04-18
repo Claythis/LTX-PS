@@ -361,6 +361,26 @@ def main():
         help="Path to the LLM model, default is Llama-3.2-3B-Instruct, but you can use other models like Llama-3.1-8B-Instruct, or other models supported by Hugging Face",
     )
 
+    # pose conditioning arguments
+    parser.add_argument(
+        "--input_pose_extraction",
+        type=str,
+        help="Path to the input image pose extraction file"
+    )
+
+    parser.add_argument(
+        "--target_pose_extraction",
+        type=str,
+        help="Path to the target image pose extraction file (a-pose)"
+    )
+
+    parser.add_argument(
+        "__pose_conditining_strength",
+        type=float,
+        default=0.8,
+        help="Pose conditioning strength (between 0 and 1). If not specified, will use the default value of 0.8.",
+    )
+
     args = parser.parse_args()
     # If --image_path is given, set up conditioning args
     if args.image_path:
